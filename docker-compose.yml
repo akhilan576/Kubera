@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+
+  # ── Trading Bot ──────────────────────────────────────────────────────────────
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    container_name: zeno-bot
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./db:/app/db           # SQLite database persists
+      - ./logs:/app/logs       # log files persist
+      - ./models:/app/models   # trained model bundles persist
+    networks:
+      - zeno-net
+    depends_on:
+      - api
+
+  # ── FastAPI Backend ──────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: zeno-api
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./db:/app/db
+      - ./logs:/app/logs
+      - ./models:/app/models
+    networks:
+      - zeno-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ── Next.js Dashboard ────────────────────────────────────────────────────────
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: zeno-web
+    restart: unless-stopped
+    environment:
+      - API_URL=http://api:8000
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    networks:
+      - zeno-net
+    depends_on:
+      api:
+        condition: service_healthy
+
+networks:
+  zeno-net:
+    driver: bridge

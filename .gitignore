@@ -1,0 +1,53 @@
+# Environment / secrets
+.env
+.env.*
+*.env
+
+# Databases (paper trading state — not source code)
+db/*.db
+db/*.db-shm
+db/*.db-wal
+
+# Trained ML models (large binary files, reproducible via training)
+models/saved/*.pkl
+models/saved/*.joblib
+models/saved/logs/
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Runtime artifacts
+bot.lock
+*.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Node / Next.js (web frontend)
+web/node_modules/
+web/.next/
+web/out/
+web/.env
+web/.env.*
+
+# freqtrade crypto user data (contains API keys / trade history)
+crypto/user_data/
+
+# Test coverage
+.coverage
+htmlcov/
+
+# macOS
+.DS_Store

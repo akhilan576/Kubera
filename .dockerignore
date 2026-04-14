@@ -1,0 +1,11 @@
+.venv
+__pycache__
+*.pyc
+*.pyo
+.env
+.git
+.gitignore
+logs/
+*.log
+web/node_modules
+web/.next
